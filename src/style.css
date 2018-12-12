@@ -1,0 +1,14 @@
+td{
+  min-width: 30px;
+  min-height: 20px;
+  padding: 2px 5px;
+  border: 1px solid black;
+  margin: 2px 5px;
+}
+
+td.corner-placeholder{
+}
+
+table{
+  border: 1px solid black;
+}
