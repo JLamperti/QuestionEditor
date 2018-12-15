@@ -56,26 +56,33 @@ class EditorView extends React.Component{
   updateParentSummary(){
     let longestLabel = 0
     let shortestLabel = 0
+    let numberOfUploadedImages = 0
     for (let row of this.state.rows) {
-      if (row.getName().length > longestLabel) {
+      if (row.getName().length > longestLabel || longestLabel === 0) {
         longestLabel = row.getName().length
       }
       if (row.getName().length < shortestLabel || shortestLabel === 0) {
         shortestLabel = row.getName().length
       }
+      if (row.getImage() !== null) {
+        numberOfUploadedImages++
+      }
     }
     for (let col of this.state.cols) {
-      if (col.getName().length > longestLabel) {
+      if (col.getName().length > longestLabel || longestLabel === 0) {
         longestLabel = col.getName().length
       }
       if (col.getName().length < shortestLabel|| shortestLabel === 0) {
         shortestLabel = col.getName().length
       }
+      if (col.getImage() !== null) {
+        numberOfUploadedImages++
+      }
     }
     this.props.updateSummary(
       this.state.rows.length,
       this.state.cols.length,
-      0,
+      numberOfUploadedImages,
       longestLabel,
       shortestLabel
     )
@@ -249,8 +256,23 @@ class LabelName extends React.Component{
 
 class LabelImage extends React.Component{
   label = this.props.label
+  state = {image: "./../img/flag-outline.png"}
+  handleChange = this.handleChange.bind(this)
+  fileUpload = React.createRef()
+  showFileUpload = this.showFileUpload.bind(this)
+
+  handleChange(event){
+    this.setState({image: URL.createObjectURL(event.target.files[0])})
+  }
+
+  showFileUpload(){
+    this.fileUpload.current.click()
+  }
+
   render(){
-    return <td>img</td>
+    let fc = <input ref={this.fileUpload} className="image-upload" type="file" onChange={this.handleChange}></input>
+    let img = <input type="image" alt="uploaded by user" src={this.state.image} onClick={this.showFileUpload}/>
+    return <td>{fc}{img}</td>
   }
 }
 

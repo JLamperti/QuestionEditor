@@ -12,3 +12,7 @@ td.corner-placeholder{
 table{
   border: 1px solid black;
 }
+
+input.image-upload{
+  display:none;
+}
