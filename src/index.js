@@ -137,9 +137,12 @@ class EditorView extends React.Component{
   }
 
   removeCol(label){
+    console.log("rming label " + label.getName())
     let newCols = this.state.cols
     let pos = newCols.indexOf(label)
+    console.log("index of lbl: "+pos)
     newCols.splice(pos, 1)
+    console.log(newCols)
     this.setState({ cols:newCols })
     this.updateParentSummary()
   }
@@ -147,6 +150,15 @@ class EditorView extends React.Component{
 
   updateName(label, name){
     label.setName(name)
+    this.updateLabelState(label)
+  }
+
+  updateImage(label, image){
+    label.setImage(image)
+    this.updateLabelState(label)
+  }
+
+  updateLabelState(label){
     let index = this.state.rows.indexOf(label)
     if (index !== -1) {
       let newRows = this.state.rows
@@ -162,10 +174,6 @@ class EditorView extends React.Component{
       this.setState({cols: newCols})
       this.updateParentSummary()
     }
-  }
-
-  updateImage(label, image){
-
   }
 
 ////////////////////// RENDER
@@ -184,10 +192,10 @@ class EditorView extends React.Component{
     }
     return(
       <tr>
-        <LabelImage label = {label}/>
+        <LabelImage label = {label} updateImage={this.updateImage.bind(this)}/>
         <LabelName label = {label} updateName = {this.updateName}/>
         {buttons}
-        <RemoveButton label={label} removeFunction={(lbl) => this.removeRow(lbl)} />
+        <td className="button-remove" onClick={() => this.removeRow(label)}>-</td>
       </tr>
     )
   }
@@ -195,7 +203,7 @@ class EditorView extends React.Component{
   getButtonsDeleteCol(){
     let btns = []
     for (let label of this.state.cols) {
-      btns.push(<RemoveButton label={label} removeFunction={(lbl) => this.removeCol(lbl)}/>)
+      btns.push(<td className="button-remove" onClick={() => this.removeCol(label)}>-</td>)
     }
     return btns
   }
@@ -213,8 +221,8 @@ class EditorView extends React.Component{
   getColImages(){
     let images = []
     if (this.state.cols !== undefined && this.state.cols.length > 0) {
-      for (let col of this.state.cols){
-        images.push(<LabelImage image = {col.getImage()}/>)
+      for (let label of this.state.cols){
+        images.push(<LabelImage label = {label} updateImage={this.updateImage}/>)
       }
     }
     return images
@@ -227,51 +235,36 @@ function RadioButton (props){
     return <td>O</td>
 }
 
-class RemoveButton extends React.Component{
-  label = this.props.label
-  removeFunction = this.props.removeFunction
-
-  render(){
-    return (
-      <td className="button-remove" onClick={() => this.removeFunction(this.label)}>-</td>
-    )
-  }
-}
-
 class LabelName extends React.Component{
-  label = this.props.label
   handleChange = this.handleChange.bind(this)
-  state = {name: this.label.getName()}
 
   handleChange(event){
-    this.setState({name: event.target.value})
-    this.props.updateName(this.label, event.target.value)
+    this.props.updateName(this.props.label, event.target.value)
   }
 
   render(){
-    let input = <input type="text" onChange={this.handleChange} value={this.state.name}></input>
+    let input = <input type="text" onChange={this.handleChange} value={this.props.label.getName()}></input>
     return <td>{input}</td>
   }
 }
 
 class LabelImage extends React.Component{
-  label = this.props.label
-  state = {image: "./../img/flag-outline.png"}
-  handleChange = this.handleChange.bind(this)
-  fileUpload = React.createRef()
-  showFileUpload = this.showFileUpload.bind(this)
 
-  handleChange(event){
-    this.setState({image: URL.createObjectURL(event.target.files[0])})
-  }
+  handleChange = this.handleChange.bind(this)
+  showFileUpload = this.showFileUpload.bind(this)
+  fileUpload = React.createRef()
 
   showFileUpload(){
     this.fileUpload.current.click()
   }
 
+  handleChange(event){
+    this.props.updateImage(this.props.label, URL.createObjectURL(event.target.files[0]))
+  }
+
   render(){
     let fc = <input ref={this.fileUpload} className="image-upload" type="file" onChange={this.handleChange}></input>
-    let img = <input type="image" alt="uploaded by user" src={this.state.image} onClick={this.showFileUpload}/>
+    let img = <input type="image" alt="uploaded by user" src={this.props.label.getImage()} onClick={this.showFileUpload}/>
     return <td>{fc}{img}</td>
   }
 }
