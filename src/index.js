@@ -2,6 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './style.css';
 
+let defaultImage = require('./plus.png')
+let imageDarkPlus = require('./plus_dark.png')
+
+
+
 class QuestionEditor extends React.Component{
   constructor(props){
     super(props)
@@ -30,12 +35,8 @@ class QuestionEditor extends React.Component{
   render(){
     return(
       <main>
-        <div class-name = "EditorView">
           <EditorView updateSummary={this.updateSummary}/>
-        </div>
-        <div className = "SummaryView">
           <SummaryView state={this.state}/>
-        </div>
       </main>
     )
   }
@@ -64,7 +65,7 @@ class EditorView extends React.Component{
       if (row.getName().length < shortestLabel || shortestLabel === 0) {
         shortestLabel = row.getName().length
       }
-      if (row.getImage() !== null) {
+      if (row.getImage() !== defaultImage) {
         numberOfUploadedImages++
       }
     }
@@ -75,7 +76,7 @@ class EditorView extends React.Component{
       if (col.getName().length < shortestLabel|| shortestLabel === 0) {
         shortestLabel = col.getName().length
       }
-      if (col.getImage() !== null) {
+      if (col.getImage() !== defaultImage) {
         numberOfUploadedImages++
       }
     }
@@ -91,23 +92,25 @@ class EditorView extends React.Component{
   render(){
 
     return (
-      <table>
-        <tbody>
-          <tr>
-            <td colSpan="2" rowSpan="2" className="corner-placeholder"></td>
-            {this.getColImages()}
-            <td className="new-entry-button" rowSpan="2" onClick={() => {this.addNewCol(this.state.cols.length)}}>+</td>
-          </tr>
-          <tr>
-            {this.getColNames()}
-          </tr>
-          {this.getRows()}
-          <tr>
-            <td className="new-entry-button" colSpan="2" onClick={() => {this.addNewRow(this.state.rows.length)}}>+</td>
-            {this.getButtonsDeleteCol()}
-          </tr>
-        </tbody>
-      </table>
+      <div className = "editor-view">
+        <table>
+          <tbody>
+            <tr>
+              <td colSpan="2" rowSpan="2" className="corner-placeholder"></td>
+              {this.getColImages()}
+              <td className="button-new-label" rowSpan="2" onClick={() => {this.addNewCol(this.state.cols.length)}}><img src={imageDarkPlus} alt="button add column"/></td>
+            </tr>
+            <tr>
+              {this.getColNames()}
+            </tr>
+            {this.getRows()}
+            <tr>
+              <td className="button-new-label" colSpan="2" onClick={() => {this.addNewRow(this.state.rows.length)}}><img src={imageDarkPlus} alt="button add row"/></td>
+              {this.getButtonsDeleteCol()}
+            </tr>
+          </tbody>
+        </table>
+      </div>
     )
   }
 
@@ -116,14 +119,14 @@ class EditorView extends React.Component{
 //
   addNewRow(nr){
     let newRows = this.state.rows
-    newRows.push(new Label("row"+nr))
+    newRows.push(new Label("Row "+nr))
     this.setState({ rows:newRows })
     this.updateParentSummary()
   }
 
   addNewCol(nr){
     let newCols = this.state.cols
-    newCols.push(new Label("col"+nr))
+    newCols.push(new Label("Column "+nr))
     this.setState({ cols:newCols })
     this.updateParentSummary()
   }
@@ -232,7 +235,7 @@ class EditorView extends React.Component{
 }
 
 function RadioButton (props){
-    return <td>O</td>
+    return <td className="radio-button">O</td>
 }
 
 class LabelName extends React.Component{
@@ -243,7 +246,7 @@ class LabelName extends React.Component{
   }
 
   render(){
-    let input = <input type="text" onChange={this.handleChange} value={this.props.label.getName()}></input>
+    let input = <input type="text" size="10" className="label-name" onChange={this.handleChange} value={this.props.label.getName()}></input>
     return <td>{input}</td>
   }
 }
@@ -264,7 +267,7 @@ class LabelImage extends React.Component{
 
   render(){
     let fc = <input ref={this.fileUpload} className="image-upload" type="file" onChange={this.handleChange}></input>
-    let img = <input type="image" alt="uploaded by user" src={this.props.label.getImage()} onClick={this.showFileUpload}/>
+    let img = <input className="image-display" type="image" alt="Upload Image" src={this.props.label.getImage()} onClick={this.showFileUpload}/>
     return <td>{fc}{img}</td>
   }
 }
@@ -273,7 +276,7 @@ class LabelImage extends React.Component{
 class Label{
   constructor(name){
     this.name = name
-    this.image = null
+    this.image = defaultImage
   }
 
   setName (name){
@@ -297,13 +300,13 @@ class SummaryView extends React.Component{
 
   render(){
     return(
-      <div>
-        <p>summary placeholder</p>
-        <p>number of rows: {this.props.state.numberOfRows}</p>
-        <p>number of cols: {this.props.state.numberOfCols}</p>
-        <p>number of images uploaded: {this.props.state.numberOfUploadedImages}</p>
-        <p>longest label: {this.props.state.longestLabel}</p>
-        <p>shortest label: {this.props.state.shortestLabel}</p>
+      <div className="summary-view">
+        <p><em>Stats:</em></p>
+        <p>Number of Rows: {this.props.state.numberOfRows}</p>
+        <p>Number of Columns: {this.props.state.numberOfCols}</p>
+        <p>Number of Images uploaded: {this.props.state.numberOfUploadedImages}</p>
+        <p>Longest Label: {this.props.state.longestLabel}</p>
+        <p>Shortest Label: {this.props.state.shortestLabel}</p>
       </div>
     )
   }
