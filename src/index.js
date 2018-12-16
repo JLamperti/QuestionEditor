@@ -6,7 +6,9 @@ let defaultImage = require('./plus.png')
 let imageDarkPlus = require('./plus_dark.png')
 
 
-
+/**
+* the main view, parent and connector for editor view and summary view
+*/
 class QuestionEditor extends React.Component{
   constructor(props){
     super(props)
@@ -26,7 +28,15 @@ class QuestionEditor extends React.Component{
   }
 
 
-
+  /**
+   * updates the state of the question editor, rerendering everything to update the stats
+   *
+   * @param number numberOfRows how many rows there currently are in the question editor
+   * @param number numberOfCols how many columns there currently are in the question editor
+   * @param number numberOfUploadedImages how many images have been uploaded to (but not deleted from) the question editor
+   * @param number longestLabel how long is the longest label in the question editor
+   * @param number shortestLabel how long is the shortest label in the question editor
+   */
   updateSummary(numberOfRows, numberOfCols, numberOfUploadedImages, longestLabel, shortestLabel){
     this.setState({numberOfRows: numberOfRows, numberOfCols: numberOfCols, numberOfUploadedImages: numberOfUploadedImages, longestLabel:  longestLabel, shortestLabel: shortestLabel})
   }
@@ -43,6 +53,10 @@ class QuestionEditor extends React.Component{
 
 }
 
+/**
+* the main editor view, maintains the rows and cols as state and handles their updating
+* renders the radio button matrix
+*/
 class EditorView extends React.Component{
   constructor(props){
     super(props)
@@ -54,6 +68,9 @@ class EditorView extends React.Component{
     this.updateImage = this.updateImage.bind(this)
   }
 
+  /**
+   * updates the state in the questionEditor with the current stats (numberOfRows etc)
+   */
   updateParentSummary(){
     let longestLabel = 0
     let shortestLabel = 0
@@ -142,12 +159,9 @@ class EditorView extends React.Component{
   }
 
   removeCol(label){
-    console.log("rming label " + label.getName())
     let newCols = this.state.cols
     let pos = newCols.indexOf(label)
-    console.log("index of lbl: "+pos)
     newCols.splice(pos, 1)
-    console.log(newCols)
     this.setState({ cols:newCols })
     this.updateParentSummary()
   }
@@ -163,6 +177,9 @@ class EditorView extends React.Component{
     this.updateLabelState(label)
   }
 
+  /**
+   * updates a label in this elements state
+   */
   updateLabelState(label){
     let index = this.state.rows.indexOf(label)
     if (index !== -1) {
@@ -182,6 +199,9 @@ class EditorView extends React.Component{
   }
 
 ////////////////////// RENDER
+  /**
+   * gets all rows
+   */
   getRows(){
     let rows = []
     for (let label of this.state.rows){
@@ -190,6 +210,9 @@ class EditorView extends React.Component{
     return rows
   }
 
+  /**
+    * gets an individual row with its image, name and delete button
+    */
   getRow(label){
     let buttons = []
     for (let i = 0; i < this.state.cols.length; i++){
@@ -205,6 +228,9 @@ class EditorView extends React.Component{
     )
   }
 
+  /**
+   * gets the delete buttons for all columns
+   */
   getButtonsDeleteCol(){
     let btns = []
     for (let label of this.state.cols) {
@@ -213,6 +239,9 @@ class EditorView extends React.Component{
     return btns
   }
 
+  /**
+   * gets the names for all columns
+   */
   getColNames(){
     let names = []
     if (this.state.cols !== undefined && this.state.cols.length > 0) {
@@ -223,6 +252,9 @@ class EditorView extends React.Component{
     return names
   }
 
+  /**
+   * gets the images for all columns
+   */
   getColImages(){
     let images = []
     if (this.state.cols !== undefined && this.state.cols.length > 0) {
@@ -235,11 +267,18 @@ class EditorView extends React.Component{
 
 
 }
-
+/**
+ * a simple radio button (no functionality)
+ */
 function RadioButton (props){
     return <td className="radio-button">O</td>
 }
 
+/**
+* displays an input with the name of a label
+* @param Label label: the label linked to this input
+* @param function updateName: function to update the name and state in the parent class
+*/
 class LabelName extends React.Component{
   handleChange = this.handleChange.bind(this)
 
@@ -253,6 +292,11 @@ class LabelName extends React.Component{
   }
 }
 
+/**
+* displays a label image (clickable to change image)
+* @param Label label: the label connected to the images
+* @param function updateImage: function to update image and state in parent class
+*/
 class LabelImage extends React.Component{
 
   handleChange = this.handleChange.bind(this)
@@ -275,29 +319,37 @@ class LabelImage extends React.Component{
 }
 
 
+/**
+* main information storage class in this project
+* has two props, name(string) and image (a path) which can be get and set
+*/
 class Label{
   constructor(name){
-    this.name = name
-    this.image = defaultImage
+    this._name = name
+    this._image = defaultImage
   }
 
   setName (name){
-    this.name = name
+    this._name = name
   }
 
   setImage(image){
-    this.image = image
+    this._image = image
   }
 
   getName(){
-    return this.name
+    return this._name
   }
   getImage(){
-    return this.image
+    return this._image
   }
 
 }
 
+/**
+* question editor field
+* maintains its own state since it does not interact with anything else
+*/
 class QuestionText extends React.Component{
   state = {question: ""}
   handleChange = this.handleChange.bind(this)
@@ -329,6 +381,14 @@ class QuestionText extends React.Component{
   }
 }
 
+/**
+* view that displays the stats it is given via its constructor
+* @param number numberOfRows how many rows there currently are in the question editor
+* @param number numberOfCols how many columns there currently are in the question editor
+* @param number numberOfUploadedImages how many images have been uploaded to (but not deleted from) the question editor
+* @param number longestLabel how long is the longest label in the question editor
+* @param number shortestLabel how long is the shortest label in the question editor
+*/
 class SummaryView extends React.Component{
 
   render(){
