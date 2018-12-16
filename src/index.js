@@ -93,6 +93,8 @@ class EditorView extends React.Component{
 
     return (
       <div className = "editor-view">
+        <h2>Question Editor</h2>
+        <QuestionText/>
         <table>
           <tbody>
             <tr>
@@ -296,12 +298,43 @@ class Label{
 
 }
 
+class QuestionText extends React.Component{
+  state = {question: ""}
+  handleChange = this.handleChange.bind(this)
+
+  handleChange(event){
+    this.setState({question: event.target.value})
+  }
+
+  render(){
+    let value
+    let size
+    if (this.state.question !== "") {
+      value = this.state.question
+      size = this.state.question.length+5
+    } else{
+      value = ""
+      size = 25
+    }
+    return(
+      <input
+        type="text"
+        size={size}
+        className="question"
+        onChange={this.handleChange}
+        value={value}
+        placeholder= "Enter your Question here"
+      ></input>
+    )
+  }
+}
+
 class SummaryView extends React.Component{
 
   render(){
     return(
       <div className="summary-view">
-        <p><em>Stats:</em></p>
+        <h2>Question Stats</h2>
         <p>Number of Rows: {this.props.state.numberOfRows}</p>
         <p>Number of Columns: {this.props.state.numberOfCols}</p>
         <p>Number of Images uploaded: {this.props.state.numberOfUploadedImages}</p>

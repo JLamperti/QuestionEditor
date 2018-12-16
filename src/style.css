@@ -19,6 +19,7 @@ main{
 .summary-view{
   min-width: 200px;
   padding-right: 50px;
+  padding-left: 40px;
 }
 
 
@@ -48,6 +49,14 @@ input.label-name {
   font-style: italic;
   text-align: center;
   min-width: 30px;
+}
+input.question{
+  border: none;
+  font-family: "Quicksand", sans-serif;
+  font-style: italic;
+  font-size: 110%;
+  min-width: 30px;
+  padding-bottom: 30px;
 }
 
 .button-remove {
